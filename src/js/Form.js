@@ -247,8 +247,8 @@ define( [ 'enketo-js/FormModel', 'enketo-js/widgets', 'jquery', 'enketo-js/plugi
                     //the latter requires e.g the root node to have the correct name
                     else if ( $( this ).parent( 'meta' ).length === 1 && model.node( $( this ).parent( 'meta' ).getXPath( 'instance' ), 0 ).get().length === 1 ) {
                         //if there is no existing meta node with that node as child
-                        if ( model.node( ':first > meta > ' + name, 0 ).get().length === 0 ) {
-                            $( this ).clone().appendTo( model.node( ':first > meta' ).get() );
+                        if ( model.node( '/*/meta/' + name, 0 ).get().length === 0 ) {
+                            $( this ).clone().appendTo( model.node( '/*/meta' ).get() );
                         } else {
                             error = 'Found duplicate meta node (' + name + ')!';
                             console.error( error );
@@ -261,7 +261,7 @@ define( [ 'enketo-js/FormModel', 'enketo-js/widgets', 'jquery', 'enketo-js/plugi
                     }
                 } );
 
-                instanceID = model.node( '*>meta>instanceID' );
+                instanceID = model.node( '/*/meta/instanceID' );
                 if ( instanceID.get().length !== 1 ) {
                     error = 'InstanceID node in default instance error (found ' + instanceID.get().length + ' instanceID nodes)';
                     console.error( error );
@@ -272,13 +272,13 @@ define( [ 'enketo-js/FormModel', 'enketo-js/widgets', 'jquery', 'enketo-js/plugi
                 // if record is not local, copy instanceID value to deprecatedID and empty instanceID
                 if ( !data.unsubmitted ) {
                     // add deprecatedID node
-                    if ( model.node( '*>meta>deprecatedID' ).get().length !== 1 ) {
+                    if ( model.node( '/*/meta/deprecatedID' ).get().length !== 1 ) {
                         var deprecatedIDXMLNode = $.parseXML( "<deprecatedID/>" ).documentElement;
                         document.adoptNode( deprecatedIDXMLNode );
-                        $( deprecatedIDXMLNode ).appendTo( model.node( '*>meta' ).get() );
+                        $( deprecatedIDXMLNode ).appendTo( model.node( '/*/meta' ).get() );
                     }
 
-                    model.node( '*>meta>deprecatedID' ).setVal( instanceID.getVal()[ 0 ], null, 'string' );
+                    model.node( '/*/meta/deprecatedID' ).setVal( instanceID.getVal()[ 0 ], null, 'string' );
                     instanceID.setVal( '', null, 'string' );
                 }
             };
@@ -1463,11 +1463,11 @@ define( [ 'enketo-js/FormModel', 'enketo-js/widgets', 'jquery', 'enketo-js/plugi
                     } );
                     // In addition the presence of certain meta data in the instance may automatically trigger a preload function
                     // even if the binding is not present. Note, that this actually does not deal with HTML elements at all.
-                    meta = model.node( '*>meta>*' );
+                    meta = model.node( '/*/meta/*' );
                     meta.get().each( function() {
                         item = null;
                         name = $( this ).prop( 'nodeName' );
-                        dataNode = model.node( '*>meta>' + name );
+                        dataNode = model.node( '/*/meta/' + name );
                         curVal = dataNode.getVal()[ 0 ];
                         //first check if there isn't a binding with a preloader that already took care of this
                         if ( $form.find( '#or-preload-items input[name$="/meta/' + name + '"][data-preload]' ).length === 0 ) {

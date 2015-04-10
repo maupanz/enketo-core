@@ -58,6 +58,8 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
 
         $model = $( this.xml );
 
+        this.hasInstance = $model.find( 'model > instance' ).length > 0;
+
         // check if all secondary instances with an external source have been populated
         $model.find( 'model > instance[src]:empty' ).each( function( index, instance ) {
             that.loadErrors.push( 'External instance "' + $( instance ).attr( 'id' ) + '" is empty.' );
@@ -148,7 +150,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
             this.filter.noEmpty = ( typeof filter.noEmpty !== 'undefined' ) ? filter.noEmpty : false;
             this.index = index;
 
-            if ( $model.find( 'model>instance' ).length > 0 ) {
+            /*if ( $model.find( 'model>instance' ).length > 0 ) {
                 //to refer to non-first instance, the instance('id_literal')/path/to/node syntax can be used
                 if ( this.selector !== defaultSelector && this.selector.indexOf( '/' ) !== 0 && that.INSTANCE.test( this.selector ) ) {
                     this.selector = this.selector.replace( that.INSTANCE, "model > instance#$1" );
@@ -156,7 +158,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
                 }
                 //default context is the first instance in the model            
                 this.selector = "model > instance:eq(0) " + this.selector;
-            }
+            }*/
         }
 
         /**
@@ -171,7 +173,8 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
 
 
             // default
-            $nodes = $model.xfind( this.selector );
+            //$nodes = $model.xfind( this.selector);
+            $nodes = $( that.evaluate( this.selector, 'nodes', null, null, true ) );
 
             //noEmpty automatically excludes non-leaf nodes
             if ( this.filter.noEmpty === true ) {
@@ -530,7 +533,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
      * @return {string} instanceID
      */
     FormModel.prototype.getInstanceID = function() {
-        return this.node( ':first>meta>instanceID' ).getVal()[ 0 ];
+        return this.node( '/*/meta/instanceID' ).getVal()[ 0 ];
     };
 
     /**
@@ -539,7 +542,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
      * @return {string} instanceID
      */
     FormModel.prototype.getInstanceName = function() {
-        return this.node( ':first>meta>instanceName' ).getVal()[ 0 ];
+        return this.node( '/*/meta/instanceName' ).getVal()[ 0 ];
     };
 
     /**
@@ -736,8 +739,10 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
      * @return {string}      new expression
      */
     FormModel.prototype.shiftRoot = function( expr ) {
-        expr = expr.replace( /^(\/(?!model\/)[^\/][^\/\s]+\/)/g, '/model/instance[1]$1' );
-        expr = expr.replace( /([^a-zA-Z0-9\.\]\)\/])(\/(?!model\/)[^\/][^\/\s]+\/)/g, '$1/model/instance[1]$2' );
+        if ( this.hasInstance ) {
+            expr = expr.replace( /^(\/(?!model\/)[^\/][^\/\s]*\/)/g, '/model/instance[1]$1' );
+            expr = expr.replace( /([^a-zA-Z0-9\.\]\)\/\*])(\/(?!model\/)[^\/][^\/\s]*\/)/g, '$1/model/instance[1]$2' );
+        }
         return expr;
     };
 
