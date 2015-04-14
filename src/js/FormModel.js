@@ -72,14 +72,11 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
          * Initializes FormModel
          */
         FormModel.prototype.init = function() {
-            var /** @type {string} */ val;
-
             // trimming values
             this.node( null, null, {
                 noEmpty: true
             } ).get().each( function() {
-                val = $( this ).text();
-                $( this ).text( $.trim( val ) );
+                this.textContent = this.textContent.trim();
             } );
             this.bindJsEvaluator();
             this.cloneAllTemplates();

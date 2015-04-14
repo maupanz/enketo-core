@@ -10,6 +10,15 @@ define( [ "enketo-js/FormModel" ], function( Model ) {
         return model;
     };
 
+    // I don't remember why this functionality exists
+    describe( "Primary instance node values", function() {
+        var model = new Model( '<model><instance><data><nodeA> 2  </nodeA></instance></model>' );
+        model.init();
+        it( 'are trimmed during initialization', function() {
+            expect( model.getStr() ).toEqual( '<data><nodeA>2</nodeA></data>' );
+        } );
+    } );
+
     describe( "Data node getter", function() {
         var i, t =
             [
