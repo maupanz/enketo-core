@@ -138,7 +138,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
          */
 
         function Nodeset( selector, index, filter ) {
-            var defaultSelector = '*';
+            var defaultSelector = that.hasInstance ? '/model/instance[1]//*' : '//*';
             this.originalSelector = selector;
             this.selector = ( typeof selector === 'string' && selector.length > 0 ) ? selector : defaultSelector;
             filter = ( typeof filter !== 'undefined' && filter !== null ) ? filter : {};
@@ -591,7 +591,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
         var that = this;
         // in reverse document order to properly deal with nested repeat templates
         // for now we support both the official namespaced template and the hacked non-namespaced template attributes
-        this.evaluate( '/model/node()//node()[@template] | /model/node()//node()[@jr:template]', 'nodes', null, null, true ).reverse().forEach( function( templateEl ) {
+        this.evaluate( '/model/*//*[@template] | /model/*//*[@jr:template]', 'nodes', null, null, true ).reverse().forEach( function( templateEl ) {
             var $template = $( templateEl );
             that.templates[ $template.getXPath( 'instance' ) ] = $template.removeAttr( 'template' ).removeAttr( 'jr:template' ).remove();
         } );
@@ -628,7 +628,7 @@ define( [ 'xpath', 'jquery', 'enketo-js/plugins', 'enketo-js/extend', 'jquery.xp
         var that = this;
         // in reverse document order to properly deal with nested repeat templates
         // for now we support both the official namespaced template and the hacked non-namespaced template attributes
-        this.evaluate( '/model/node()//node()[@template] | /model/node()//node()[@jr:template]', 'nodes', null, null, true ).reverse().forEach( function( templateEl ) {
+        this.evaluate( '/model/*//*[@template] | /model/*//*[@jr:template]', 'nodes', null, null, true ).reverse().forEach( function( templateEl ) {
             var nodeName = templateEl.nodeName,
                 selector = $( templateEl ).getXPath( 'instance' ),
                 ancestorTemplateNodes = that.evaluate( 'ancestor::' + nodeName + '[@template] | ancestor::' + nodeName + '[@jr:template]', 'nodes', selector, 0, true );

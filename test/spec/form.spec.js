@@ -222,7 +222,7 @@ define( [ "enketo-js/Form" ], function( Form ) {
 
             //this is an important test even though it may not seem to be...
             it( "includes the deprecatedID in the string to be submitted", function() {
-                expect( form.getModel().getStr().indexOf( '<deprecatedID/>' ) ).not.toEqual( -1 );
+                expect( form.getModel().getStr().indexOf( '<deprecatedID>' ) ).not.toEqual( -1 );
             } );
 
             it( "gives the new deprecatedID node the old value of the instanceID node of the instance-to-edit", function() {
